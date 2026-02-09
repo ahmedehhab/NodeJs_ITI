@@ -175,7 +175,7 @@ function summary(args) {
 
 }
 function list(args) {
-    const products = getProducts();
+    let products = getProducts();
     const updatedProducts = products.map((item) => {
         if (item.quantity > 2) {
             item.status = "available";
@@ -185,7 +185,12 @@ function list(args) {
             item.status = "out of stock";
         }
     })
-
+  
+   if(args.length==2){
+    if(args[0]=="-c"){
+        products=products.filter((item)=>item.category==args[1]);
+    } 
+   }
     console.table(products);
 }
 const commands = {
