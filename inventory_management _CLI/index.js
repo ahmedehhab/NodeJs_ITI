@@ -45,6 +45,20 @@ function add(args) {
         quantity: 1,
         category: "General"
     };
+    if (args.length == 5) {
+
+        if (!(args[1] == "-q" || args[1] == "--quantity" && !isNaN(args[2]))) {
+            console.log("quantity must be a number");
+            return;
+        }
+        if (!(args[3] == "-c" || args[3] == " --category")) {
+            console.log(`can not find this symbole ${args[3]}`);
+            return;
+
+        }
+        product.quantity = args[2];
+        product.category = args[4];
+    }
     const updatedProducts = products.concat(product);
     save(updatedProducts);
 }
@@ -97,7 +111,7 @@ function restock(args) {
 
 }
 function edit(args) {
-    if (args.length != 2) {
+    if (args.length < 2) {
         console.log("id and name is requried");
         return;
     }
@@ -111,7 +125,16 @@ function edit(args) {
             console.log("item is not found");
             return;
         } else {
+            if(args.length==5){
+                if(args[1]=="-n"){
+                    item.name=args[2];
+                }
+                if(args[3]=="-c"){
+                    item.category=args[4];
+                }
+            }else
             item.name = args[1];
+
             save(products);
         }
     }
@@ -128,26 +151,42 @@ function removeItem(args) {
 }
 
 function summary(args) {
-    const products=getProducts();
-    const result = { totalItems: products.length };
-  const totalQuantity = products.reduce((ac, item) => ac + item.quantity, 0);
-  result.totalQuantity = totalQuantity;
-  console.log(result);
+    const products = getProducts();
+    const result = {
+        totalItems: products.length,
+        statusCount: {
+            available: 0,
+            lowStock: 0,
+            outOfStock: 0
+        }
+    };
+    const totalQuantity = products.reduce((ac, item) => ac + item.quantity, 0);
+    result.totalQuantity = totalQuantity;
+    for (const item of products) {
+        if (item.quantity > 2) {
+            result.statusCount.available++;
+        } else if (item.quantity > 0) {
+            result.statusCount.lowStock++;
+        } else {
+            result.statusCount.outOfStock++;
+        }
+    }
+    console.log(result);
 
 }
-function list (args){
-    const products=getProducts();
+function list(args) {
+    const products = getProducts();
     const updatedProducts = products.map((item) => {
-    if (item.quantity > 2) {
-      item.status = "available";
-    } else if (item.quantity > 0 && item.quantity < 2) {
-      item.status = "low stock"
-    } else if (item.quantity == 0) {
-      item.status = "out of stock";
-    }
-  })
+        if (item.quantity > 2) {
+            item.status = "available";
+        } else if (item.quantity > 0 && item.quantity < 2) {
+            item.status = "low stock"
+        } else if (item.quantity == 0) {
+            item.status = "out of stock";
+        }
+    })
 
-  console.table(products);
+    console.table(products);
 }
 const commands = {
     add,
