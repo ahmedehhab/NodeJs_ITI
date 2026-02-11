@@ -1,0 +1,16 @@
+html
+  head
+    title  invertory
+    link(rel="stylesheet", href="/style.css")
+  body
+    h1 invertory
+    table
+      tr
+        th Name
+        th Quantity
+        th Category
+      each item in data
+        tr
+          td= item.name
+          td= item.quantity
+          td= item.category
