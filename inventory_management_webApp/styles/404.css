@@ -1,0 +1,35 @@
+body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+        }
+        .content {
+            text-align: center;
+        }
+        h1 {
+            font-size: 8rem;
+            margin: 0;
+            font-weight: 900;
+            color: #eeeeee; 
+        }
+        p {
+            font-size: 1.2rem;
+            margin-top: -30px; 
+            margin-bottom: 2rem;
+        }
+        a {
+            color: #1a1a1a;
+            text-decoration: none;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 4px;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #777;
+            border-color: #777;
+        }

@@ -25,7 +25,7 @@ function getNextId(products) {
 }
 
 function add(args) {
-    if (args.length == 0) {
+    if (!args.length) {
         console.log("the name must be required");
         return;
     }
@@ -125,15 +125,15 @@ function edit(args) {
             console.log("item is not found");
             return;
         } else {
-            if(args.length==5){
-                if(args[1]=="-n"){
-                    item.name=args[2];
+            if (args.length == 5) {
+                if (args[1] == "-n") {
+                    item.name = args[2];
                 }
-                if(args[3]=="-c"){
-                    item.category=args[4];
+                if (args[3] == "-c") {
+                    item.category = args[4];
                 }
-            }else
-            item.name = args[1];
+            } else
+                item.name = args[1];
 
             save(products);
         }
@@ -185,12 +185,12 @@ function list(args) {
             item.status = "out of stock";
         }
     })
-  
-   if(args.length==2){
-    if(args[0]=="-c"){
-        products=products.filter((item)=>item.category==args[1]);
-    } 
-   }
+
+    if (args.length == 2) {
+        if (args[0] == "-c") {
+            products = products.filter((item) => item.category == args[1]);
+        }
+    }
     console.table(products);
 }
 const commands = {
