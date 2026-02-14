@@ -1,23 +1,20 @@
-const bcrypt = require('bcrypt');
 const AppError = require('../helpers/AppError');
 const catchError = require('../helpers/catchError');
+const sessions = require('../models/sessions');
 const User = require('../models/user');
 
-const auth = catchError(async (req, res, next) => {
-  const {userName, password} = req.body;
-  if (!userName || !password) {
-    throw new AppError ('username and password is requried');
+const authorization = catchError(async (req, res, next) => {
+  if (!req.headers.authorization) {
+    throw new AppError('Unauthorized', 401);
   }
-  const user = await User.findOne({userName});
-  if (!user) {
-    throw new AppError('userName or password is wrong ', 401);
+  const sessionId = req.headers.authorization;
+  console.log(sessionId);
+  if (!sessions[sessionId]) {
+    throw new AppError('invalid session id', 401);
   }
-  const passwordMatch = await bcrypt.compare(password, user.password);
-  if (!passwordMatch) {
-    throw new AppError('userName or password is wrong', 401);
-  }
+  const user = await User.findOne({userId: sessions[sessionId]});
   req.logginUser = user;
   next();
 });
 
-module.exports = auth;
+module.exports = authorization;

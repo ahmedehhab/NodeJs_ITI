@@ -2,9 +2,14 @@ const mongoose = require('mongoose');
 const Counter = require('./counter');
 
 const productSchema = mongoose.Schema({
+  productId: {
+    type: Number,
+    unique: true
+  },
   owner: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User'
+    type: Number,
+    ref: 'User',
+    required: true
   },
   name: {
     type: String,
@@ -20,22 +25,44 @@ const productSchema = mongoose.Schema({
   quantity: {
     type: Number,
     required: true
-  }
+  },
+  status: String
+
 }, {timestamps: true});
 
 productSchema.pre('save', async function () {
-  if (this.isNew) {
+  if (this.isNew && !this.productId) {
     const counter = await Counter.findOneAndUpdate(
       {name: 'productId'},
       {$inc: {value: 1}},
-      {new: true, upsert: true}
+      {new: true, upsert: true, setDefaultsOnInsert: true}
     );
 
-    this.userId = counter.value;
+    if (!counter || counter.value == null) {
+      throw new Error('Failed to generate productId');
+    }
+
+    this.productId = counter.value;
   }
 
-  return this;
+  if (this.quantity > 2) {
+    this.status = 'available';
+  } else if (this.quantity > 0 && this.quantity <= 2) {
+    this.status = 'low stock';
+  } else {
+    this.status = 'out of stock';
+  }
 });
+
+productSchema.virtual('ownerDetails', {
+  ref: 'User',
+  localField: 'owner',
+  foreignField: 'userId',
+  justOne: true
+});
+
+productSchema.set('toJSON', {virtuals: true});
+productSchema.set('toObject', {virtuals: true});
 
 const Product = mongoose.model('Product', productSchema);
 module.exports = Product;

@@ -1,3 +1,4 @@
 module.exports = {
-  userSchema: require('./user')
+  userSchema: require('./user'),
+  productSchema: require('./product')
 };
